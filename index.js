@@ -1,77 +1,43 @@
 const { ApolloServer, gql } = require('apollo-server');
+const mongoose = require('mongoose');
+
+const { MONGO_URL } = require('./config');
+const Post = require('./models/Post');
 
 const typeDefs = gql`
-	type Book {
-		title: String
-		author: Author
-	}
-
-	type Author {
-		name: String
-		books: [Book]
+	type Post {
+		id: ID!
+		body: String!
+		createdAt: String!
+		username: String!
 	}
 
 	type Query {
-		books: [Book]
-		authors: [Author]
+		getPosts: [Post]
 	}
 `;
 
-const books = [
-	{
-		title: 'The Awakening',
-		author: {
-			name: 'Kate Chopin',
-			books: {
-				title: 'The Awakening',
-				author: 'Kate Chopin',
-			},
-		},
-	},
-	{
-		title: 'City of Glass',
-		author: {
-			name: 'Paul Auster',
-			books: [
-				{
-					title: 'City of Glass',
-					author: 'Paul Auster',
-				},
-			],
-		},
-	},
-];
-
-const authors = [
-	{
-		name: 'Kate Chopin',
-		books: [
-			{
-				title: 'The Awakening',
-				author: 'Kate Chopin',
-			},
-		],
-	},
-	{
-		name: 'Paul Auster',
-		books: [
-			{
-				title: 'City of Glass',
-				author: 'Paul Auster',
-			},
-		],
-	},
-];
-
 const resolvers = {
 	Query: {
-		books: () => books,
-		authors: () => authors,
+		async getPosts() {
+			try {
+				const posts = await Post.find();
+				return posts;
+			} catch (err) {
+				throw new Error(err);
+			}
+		},
 	},
 };
 
 const server = new ApolloServer({ typeDefs, resolvers });
 
-server.listen().then(({ url }) => {
-	console.log(`Server ready at ${url}`);
-});
+mongoose
+	.connect(MONGO_URL, { useNewUrlParser: true })
+	.then(() => {
+		console.log('Connected to MongoDB');
+		return server.listen({ port: 5000 });
+	})
+	.then((res) => {
+		console.log(`Server running at ${res.url}`);
+	});
