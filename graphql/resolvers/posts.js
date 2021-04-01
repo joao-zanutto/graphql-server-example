@@ -1,6 +1,8 @@
 const checkAuth = require('../../utils/checkAuth');
 const Post = require('../../models/Post');
 
+// Defines specific Queries and Mutations for Posts objects that will be
+//   made available for the API user
 module.exports = {
 	Query: {
 		async getPosts() {

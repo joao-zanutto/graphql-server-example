@@ -1,3 +1,6 @@
+// The validators functions will start an error object and will add an error
+//  key-value pair properties based on fields that contain invalid entries
+
 module.exports.validateRegisterInput = (
 	username,
 	email,

@@ -9,6 +9,7 @@ const {
 const { SECRET_KEY } = require('../../secret');
 const User = require('../../models/User');
 
+// Helper function to generate token for user
 function generateToken(user) {
 	return jwt.sign(
 		{
@@ -21,6 +22,7 @@ function generateToken(user) {
 	);
 }
 
+// Defines Login and Register logic as Mutations
 module.exports = {
 	Mutation: {
 		async login(_, { username, password }) {
